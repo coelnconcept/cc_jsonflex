@@ -1,0 +1,18 @@
+{
+    "name": "coelnconcept/cc-jsonflex",
+    "type": "typo3-cms-extension",
+    "description": "Provides jsonFlex datatype in TCA for JSON-Flexform",
+    "authors": [],
+    "license": "GPL-3.0-or-later",
+    "require": {
+        "typo3/cms-core": ">=13.4 <14.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "CoelnConcept\\CcJsonflex\\": "Classes"
+        }
+    },
+    "replace": {
+        "typo3-ter/cc-jsonflex": "self.version"
+    }
+}
