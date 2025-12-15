@@ -14,5 +14,10 @@
     },
     "replace": {
         "typo3-ter/cc-jsonflex": "self.version"
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "cc_jsonflex"
+        }
     }
 }
