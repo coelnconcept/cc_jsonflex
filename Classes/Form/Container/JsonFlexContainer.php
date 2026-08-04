@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -33,92 +35,106 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class JsonFlexContainer extends AbstractContainer
 {
-    /**
-     * Entry method
-     *
-     * @return array As defined in initializeResultArray() of AbstractNode
-     */
-    public function render(): array
-    {
-        $recordTypeValue = $this->data['recordTypeValue'];
+	/**
+	 * Entry method
+	 *
+	 * @return array As defined in initializeResultArray() of AbstractNode
+	 */
+	public function render(): array
+	{
+		$recordTypeValue = $this->data['recordTypeValue'];
 
-        // List of items to be rendered
-        $itemList = $this->data['parameterArray']['fieldConf']['config']['types'][$recordTypeValue]['showitem'];
+		// List of items to be rendered
+		$itemList = $this->data['parameterArray']['fieldConf']['config']['types'][$recordTypeValue]['showitem'];
 
-        $fieldsArray = GeneralUtility::trimExplode(',', $itemList, true);
+		$fieldsArray = GeneralUtility::trimExplode(',', $itemList, true);
 
-        if ($fieldsArray === []) {
-            throw new NoFieldsToRenderException('No fields defined for record type "' . $recordTypeValue . '" of table "' . $this->data['tableName'] . '"', 1730106227);
-        }
+		if ($fieldsArray === []) {
+			throw new NoFieldsToRenderException('No fields defined for record type "' . $recordTypeValue . '" of table "' . $this->data['tableName'] . '"', 1730106227);
+		}
 
-        // Streamline the fields array
-        // First, make sure there is always a --div-- definition for the first element
-        if (!str_starts_with($fieldsArray[0], '--div--')) {
-            array_unshift($fieldsArray, '--div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general');
-        }
-        // If first tab has no label definition, add "general" label
-        $firstTabHasLabel = count(GeneralUtility::trimExplode(';', $fieldsArray[0])) > 1;
-        if (!$firstTabHasLabel) {
-            $fieldsArray[0] = '--div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general';
-        }
-        // If there are at least two --div-- definitions, inner container will be a TabContainer, else a NoTabContainer
-        $tabCount = 0;
-        $fieldList = [];
-        foreach ($fieldsArray as $field) {
-            if (str_starts_with($field, '--div--')) {
-                $tabCount++;
-            }
-            else {
-            	$fieldList[] = GeneralUtility::trimExplode(';', $field)[0];
-            }
-        }
-        $hasTabs = true;
-        if ($tabCount < 2) {
-            // Remove first tab definition again if there is only one tab defined
-            array_shift($fieldsArray);
-            $hasTabs = false;
-        }
+		// Streamline the fields array
+		// First, make sure there is always a --div-- definition for the first element
+		if (!str_starts_with($fieldsArray[0], '--div--')) {
+			array_unshift($fieldsArray, '--div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general');
+		}
+		// If first tab has no label definition, add "general" label
+		$firstTabHasLabel = count(GeneralUtility::trimExplode(';', $fieldsArray[0])) > 1;
+		if (!$firstTabHasLabel) {
+			$fieldsArray[0] = '--div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general';
+		}
+		// If there are at least two --div-- definitions, inner container will be a TabContainer, else a NoTabContainer
+		$tabCount = 0;
+		$fieldList = [];
+		foreach ($fieldsArray as $field) {
+			if (str_starts_with($field, '--div--')) {
+				$tabCount++;
+			}
+			else {
+				$fieldList[] = GeneralUtility::trimExplode(';', $field)[0];
+			}
+		}
+		$hasTabs = true;
+		if ($tabCount < 2) {
+			// Remove first tab definition again if there is only one tab defined
+			array_shift($fieldsArray);
+			$hasTabs = false;
+		}
 
-        $options = $this->data;
-        if (!isset($options['jsonFlexParentFields'])) $options['jsonFlexParentFields'] = [];
-        $options['jsonFlexParentFields'][] = $options;
-        $options['databaseRow'] = (array) json_decode($options['parameterArray']['itemFormElValue'], true, 512);
-        $options['databaseRow']['uid'] = $this->data['databaseRow']['uid'];
-        foreach ($fieldList as $field) {
-            if (!isset($options['databaseRow'][$field])) $options['databaseRow'][$field] = null;
-        }
-        $options['fieldsArray'] = $fieldsArray;
-        if ($hasTabs) {
-            $options['renderType'] = 'jsonFlexTabsContainer';
-        } else {
-            $options['renderType'] = 'jsonFlexNoTabsContainer';
-        }
-        $options['processedTca']['types'] = $options['parameterArray']['fieldConf']['config']['types'];
-        $options['processedTca']['columns'] = $options['parameterArray']['fieldConf']['config']['columns'];
-        $options['processedTca']['palettes'] = $options['parameterArray']['fieldConf']['config']['palettes']??null;
-        $options['columnsToProcess'] = $fieldList;
-        $options['processedTca'] = GeneralUtility::makeInstance(TcaMigration::class)->migrate([$this->data['tableName']=>$options['processedTca']])[$this->data['tableName']];
-        $formDataGroup = GeneralUtility::makeInstance(OrderedProviderList::class);
-        $formDataGroup->setProviderList($GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['flexFormSegment']);
-        $options['processedTca'] = GeneralUtility::makeInstance(FormDataCompiler::class)
-        ->compile(
-        		[
-        				'request' => $options['request'],
-        				'processedTca' => $options['processedTca'],
-        				'command' => $options['command'],
-        				'pageTsConfig' => $options['pageTsConfig'],
-        				'userTsConfig' => $options['userTsConfig'],
-        				'databaseRow' => $options['databaseRow'],
-        				'tableName' => $options['tableName'],
-        		],$formDataGroup)['processedTca'];
-        		
-        $resultArray = $this->nodeFactory->create($options)->render();
-        $resultArray['html'] = $this->wrapWithFieldsetAndLegend($resultArray['html']);
-        return $resultArray;
-    }
+		$options = $this->data;
+		if (!isset($options['jsonFlexParentFields'])) $options['jsonFlexParentFields'] = [];
+		$options['jsonFlexParentFields'][] = $options;
+		$options['databaseRow'] = (array) json_decode($options['parameterArray']['itemFormElValue'], true, 512);
+		$options['databaseRow']['uid'] = $this->data['databaseRow']['uid'];
+		foreach ($fieldList as $field) {
+			if (!isset($options['databaseRow'][$field])) $options['databaseRow'][$field] = null;
+		}
+		$options['fieldsArray'] = $fieldsArray;
+		if ($hasTabs) {
+			$options['renderType'] = 'jsonFlexTabsContainer';
+		} else {
+			$options['renderType'] = 'jsonFlexNoTabsContainer';
+		}
+		$options['processedTca']['types'] = $options['parameterArray']['fieldConf']['config']['types'];
+		$options['processedTca']['columns'] = $options['parameterArray']['fieldConf']['config']['columns'];
+		$options['processedTca']['palettes'] = $options['parameterArray']['fieldConf']['config']['palettes']??null;
+		$options['columnsToProcess'] = $fieldList;
+		// TcaMigration::migrate() returns a TcaProcessingResult object since TYPO3 v14, while TYPO3 v13 returned a plain array. Support both to stay backwards compatible.
+		$migrationResult = GeneralUtility::makeInstance(TcaMigration::class)->migrate([$this->data['tableName'] => $options['processedTca']]);
+		$migratedTca = is_array($migrationResult) ? $migrationResult : $migrationResult->getTca();
+		$options['processedTca'] = $migratedTca[$this->data['tableName']];
+		$formDataGroup = GeneralUtility::makeInstance(OrderedProviderList::class);
+		$formDataGroup->setProviderList($GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['flexFormSegment']);
+		$compilerInput = [
+			'request' => $options['request'],
+			'processedTca' => $options['processedTca'],
+			'command' => $options['command'],
+			'pageTsConfig' => $options['pageTsConfig'],
+			'userTsConfig' => $options['userTsConfig'],
+			'databaseRow' => $options['databaseRow'],
+			'tableName' => $options['tableName'],
+		];
+		// Since TYPO3 v14 the FormEngine keeps the full TCA and the TCA schemata
+		// as state that is passed down through nested FormDataCompiler calls. The
+		// "flexFormSegment" data group does not contain InitializeProcessedTca, so
+		// these values would stay null and providers like TcaSelectItems (foreign_table)
+		// would fail. Carry them over from the parent node data when available.
+		if (array_key_exists('tcaSchemata', $options)) {
+			$compilerInput['tcaSchemata'] = $options['tcaSchemata'];
+		}
+		if (array_key_exists('fullTca', $options)) {
+			$compilerInput['fullTca'] = $options['fullTca'];
+		}
+		$options['processedTca'] = GeneralUtility::makeInstance(FormDataCompiler::class)
+		->compile($compilerInput, $formDataGroup)['processedTca'];
+		
+		$resultArray = $this->nodeFactory->create($options)->render();
+		$resultArray['html'] = $this->wrapWithFieldsetAndLegend($resultArray['html']);
+		return $resultArray;
+	}
 
-    protected function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
-    }
+	protected function getLanguageService(): LanguageService
+	{
+		return $GLOBALS['LANG'];
+	}
 }

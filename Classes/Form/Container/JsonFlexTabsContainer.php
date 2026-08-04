@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -25,7 +27,8 @@ use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
  * This container is called from FullRecordContainer and resolves the --div-- structure,
  * operates on given fieldArrays and calls a PaletteAndSingleContainer for each single tab.
  */
-class JsonFlexTabsContainer extends AbstractContainer {
+class JsonFlexTabsContainer extends AbstractContainer
+{
 	/**
 	 * Default field information enabled for this element.
 	 *
@@ -38,86 +41,86 @@ class JsonFlexTabsContainer extends AbstractContainer {
 	];
 	
 	/**
-     * Entry method
-     *
-     * @return array As defined in initializeResultArray() of AbstractNode
-     * @throws \RuntimeException
-     */
-    public function render(): array
-    {
-        $languageService = $this->getLanguageService();
-        
-        // All the fields to handle in a flat list
-        $fieldsArray = $this->data['fieldsArray'];
+	 * Entry method
+	 *
+	 * @return array As defined in initializeResultArray() of AbstractNode
+	 * @throws \RuntimeException
+	 */
+	public function render(): array
+	{
+		$languageService = $this->getLanguageService();
+		
+		// All the fields to handle in a flat list
+		$fieldsArray = $this->data['fieldsArray'];
 
-        // Create a nested array from flat fieldArray list
-        $tabsArray = [];
-        // First element will be a --div--, so it is safe to start -1 here to trigger 0 as first array index
-        $currentTabIndex = -1;
-        foreach ($fieldsArray as $fieldString) {
-            $fieldArray = $this->explodeSingleFieldShowItemConfiguration($fieldString);
-            if ($fieldArray['fieldName'] === '--div--') {
-                $currentTabIndex++;
-                if (empty($fieldArray['fieldLabel'])) {
-                    throw new \RuntimeException(
-                        'A --div-- has no label (--div--;fieldLabel) in showitem of ' . implode(',', $fieldsArray),
-                        1426454001
-                    );
-                }
-                $tabsArray[$currentTabIndex] = [
-                    'label' => $languageService->sL($fieldArray['fieldLabel']),
-                    'elements' => [],
-                ];
-            } else {
-                $tabsArray[$currentTabIndex]['elements'][] = $fieldArray;
-            }
-        }
+		// Create a nested array from flat fieldArray list
+		$tabsArray = [];
+		// First element will be a --div--, so it is safe to start -1 here to trigger 0 as first array index
+		$currentTabIndex = -1;
+		foreach ($fieldsArray as $fieldString) {
+			$fieldArray = $this->explodeSingleFieldShowItemConfiguration($fieldString);
+			if ($fieldArray['fieldName'] === '--div--') {
+				$currentTabIndex++;
+				if (empty($fieldArray['fieldLabel'])) {
+					throw new \RuntimeException(
+						'A --div-- has no label (--div--;fieldLabel) in showitem of ' . implode(',', $fieldsArray),
+						1426454001
+					);
+				}
+				$tabsArray[$currentTabIndex] = [
+					'label' => $languageService->sL($fieldArray['fieldLabel']),
+					'elements' => [],
+				];
+			} else {
+				$tabsArray[$currentTabIndex]['elements'][] = $fieldArray;
+			}
+		}
 
-        $resultArray = $this->initializeResultArray();
-        $resultArray['javaScriptModules'][] = JavaScriptModuleInstruction::create('@typo3/backend/tabs.js');
+		$resultArray = $this->initializeResultArray();
+		$resultArray['javaScriptModules'][] = JavaScriptModuleInstruction::create('@typo3/backend/tabs.js');
 
-        $fieldInformationResult = $this->renderFieldInformation();
-        $resultArray['html'] .= '<div>' . $fieldInformationResult['html'] . '</div>';
-        $resultArray = $this->mergeChildReturnIntoExistingResult($resultArray, $fieldInformationResult, false);
-        
-        $domIdPrefix = 'DTM-' . md5($this->data['parameterArray']['itemFormElName']);
-        $tabCounter = 0;
-        $tabElements = [];
-        foreach ($tabsArray as $tabWithLabelAndElements) {
-            $tabCounter++;
-            $elements = $tabWithLabelAndElements['elements'];
+		$fieldInformationResult = $this->renderFieldInformation();
+		$resultArray['html'] .= '<div>' . $fieldInformationResult['html'] . '</div>';
+		$resultArray = $this->mergeChildReturnIntoExistingResult($resultArray, $fieldInformationResult, false);
+		
+		$domIdPrefix = 'DTM-' . md5($this->data['parameterArray']['itemFormElName']);
+		$tabCounter = 0;
+		$tabElements = [];
+		foreach ($tabsArray as $tabWithLabelAndElements) {
+			$tabCounter++;
+			$elements = $tabWithLabelAndElements['elements'];
 
-            // Merge elements of this tab into a single list again and hand over to
-            // palette and single field container to render this group
-            $options = $this->data;
-            $options['elementBaseName'] .= '['.$options['fieldName'].']';
-            $options['parameterArray']['itemFormElName'] .= '['.$options['fieldName'].']';
-            $options['tabAndInlineStack'][] = [
-                'tab',
-                $domIdPrefix . '-' . $tabCounter,
-            ];
-            $options['fieldsArray'] = [];
-            foreach ($elements as $element) {
-                $options['fieldsArray'][] = implode(';', $element);
-            }
-            $options['renderType'] = 'paletteAndSingleContainer';
-            $childArray = $this->nodeFactory->create($options)->render();
+			// Merge elements of this tab into a single list again and hand over to
+			// palette and single field container to render this group
+			$options = $this->data;
+			$options['elementBaseName'] .= '['.$options['fieldName'].']';
+			$options['parameterArray']['itemFormElName'] .= '['.$options['fieldName'].']';
+			$options['tabAndInlineStack'][] = [
+				'tab',
+				$domIdPrefix . '-' . $tabCounter,
+			];
+			$options['fieldsArray'] = [];
+			foreach ($elements as $element) {
+				$options['fieldsArray'][] = implode(';', $element);
+			}
+			$options['renderType'] = 'paletteAndSingleContainer';
+			$childArray = $this->nodeFactory->create($options)->render();
 
-            if ($childArray['html'] !== '') {
-                $tabElements[] = [
-                    'label' => $tabWithLabelAndElements['label'],
-                    'content' => $childArray['html'],
-                ];
-            }
-            $resultArray = $this->mergeChildReturnIntoExistingResult($resultArray, $childArray, false);
-        }
+			if ($childArray['html'] !== '') {
+				$tabElements[] = [
+					'label' => $tabWithLabelAndElements['label'],
+					'content' => $childArray['html'],
+				];
+			}
+			$resultArray = $this->mergeChildReturnIntoExistingResult($resultArray, $childArray, false);
+		}
 
-        $resultArray['html'] .= $this->renderTabMenu($tabElements, $domIdPrefix);
-        return $resultArray;
-    }
+		$resultArray['html'] .= $this->renderTabMenu($tabElements, $domIdPrefix);
+		return $resultArray;
+	}
 
-    protected function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
-    }
+	protected function getLanguageService(): LanguageService
+	{
+		return $GLOBALS['LANG'];
+	}
 }

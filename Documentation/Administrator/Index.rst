@@ -1,194 +1,273 @@
-.. include:: ../Includes.txt
+..  include:: /Includes.rst.txt
 
-.. _administrator:
+..  _administrator:
 
 ====================
 Administrator Manual
 ====================
 
-.. _administrator-usage:
+..  _administrator-usage:
 
 Usage
 =====
 
-.. _administrator-usage-tca:
+..  _administrator-usage-tca:
 
 TCA
 ---
 
-Configuation:
-"""""""""""""
+..  _administrator-usage-tca-configuration:
 
-- :php:`'type' => 'user'` Do not use :php:`json` as type, it would result in special issues. :php:`user` is the correct type.
-- :php:`'renderType' => 'jsonFlex'`
-- :php:`'columns' => [ ... ]` configure the sub-columns
-- Optional: :php:`'mergeDataOnUpdate' => true` If this option is set, already existing JSON data will be merged. This is especially useful, if you have a mix of auto-created data and parts you want to edit.
+Configuration
+~~~~~~~~~~~~~
 
-Example 1:
-""""""""""
+..  confval:: type
+    :name: jsonflex-type
+    :type: string
+    :required: true
 
-Simple fields
+    Must be :php:`'user'`. Do not use :php:`'json'` as type, it would result in
+    special issues.
 
-.. code-block:: php
+..  confval:: renderType
+    :name: jsonflex-renderType
+    :type: string
+    :required: true
 
-   'jsondata' => [
-   	'label' => 'Database column for example 1',
-   	'config' => [
-   		'type' => 'user',
-   		'renderType' => 'jsonFlex',
-   		'columns' => [
-   			'placeholder' => [
-   				'label' => 'JSON field: simple text input',
-   				'config' => [
-   					'type' => 'input',
-   					'size' => 30,
-   					'eval' => 'trim',
-   					'default' => ''
-   				],
-   			],
-   			'required' => [
-   				'label' => 'JSON field: simple checkbox',
-   				'config' => [
-   					'type' => 'check',
-   				],
-   			],
-   			'mediatype' => [
-   				'label' => 'JSON field: simple select',
-   				'config' => [
-   					'type' => 'select',
-   					'renderType' => 'selectSingle',
-   					'items' => [
-   						['', ''],
-   						['Image', 'image'],
-   						['Audio', 'audio'],
-   						['Video', 'video'],
-   					],
-   				],
-   			],
-   		],
-   	]
-   ]
+    Must be :php:`'jsonFlex'`.
 
-Example 2:
-""""""""""
+..  confval:: columns
+    :name: jsonflex-columns
+    :type: array
+    :required: true
 
-Using `Record Types <https://docs.typo3.org/m/typo3/reference-tca/main/en-us/Types/Index.html>`_ and palettes.
+    Configures the sub-columns, using the same syntax as
+    :ref:`TCA columns <t3tca:columns>`.
 
-**Important**: The type column has to be a real database column, it cannot be a JsonFlex field.
+..  confval:: mergeDataOnUpdate
+    :name: jsonflex-mergeDataOnUpdate
+    :type: boolean
+    :default: false
 
-.. code-block:: php
+    If this option is set, already existing JSON data will be merged. This is
+    especially useful if you have a mix of auto-created data and parts you want
+    to edit.
 
-   'type' => [
-   	'label' => 'Dataset type, like CType in tt_content',
-   	'config' => [
-   		'type' => 'select',
-   		'renderType' => 'selectSingle',
-   		'items' => [
-   			['', 'default'],
-   			['Container element', 'container'],
-   			['Special content', 'special'],
-   		]
-   	]
-   ],
-   'datafields' => [
-   	'label' => 'Database column for example 2',
-   	'config' => [
-   		'type' => 'user',
-   		'renderType' => 'jsonFlex',
-   		'types' => [
-   			'default' => ['showitem' => '--palette--;;inputPalette, mediatype'],
-   			'container' => ['showitem' => 'mediatype'],
-   			'special' => ['showitem' => '--palette--;;inputPalette'],
-   		],
-   		'palettes' => [
-   			'inputPalette' => [
-   				'label' => 'Palette with placeholder and required-checkbox',
-   				'showitem' => 'placeholder, required',
-   			],
-   		],
-   		'columns' => [
-   			'placeholder' => [
-   				'label' => 'JSON field: simple text input',
-   				'config' => [
-   					'type' => 'input',
-   					'size' => 30,
-   					'eval' => 'trim',
-   					'default' => ''
-   				],
-   			],
-   			'required' => [
-   				'label' => 'JSON field: simple checkbox',
-   				'config' => [
-   					'type' => 'check',
-   				],
-   			],
-   			'mediatype' => [
-   				'label' => 'JSON field: simple select',
-   				'config' => [
-   					'type' => 'select',
-   					'renderType' => 'selectSingle',
-   					'items' => [
-   						['', ''],
-   						['Image', 'image'],
-   						['Audio', 'audio'],
-   						['Video', 'video'],
-   					],
-   				],
-   			],
-   		],
-   	]
-   ]
+..  _administrator-usage-tca-example-1:
 
+Example 1: Simple fields
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-Example 3:
-""""""""""
+..  code-block:: php
 
-Nested JsonFlex columns.
+    'jsondata' => [
+        'label' => 'Database column for example 1',
+        'config' => [
+            'type' => 'user',
+            'renderType' => 'jsonFlex',
+            'columns' => [
+                'placeholder' => [
+                    'label' => 'JSON field: simple text input',
+                    'config' => [
+                        'type' => 'input',
+                        'size' => 30,
+                        'eval' => 'trim',
+                        'default' => '',
+                    ],
+                ],
+                'required' => [
+                    'label' => 'JSON field: simple checkbox',
+                    'config' => [
+                        'type' => 'check',
+                    ],
+                ],
+                'mediatype' => [
+                    'label' => 'JSON field: simple select',
+                    'config' => [
+                        'type' => 'select',
+                        'renderType' => 'selectSingle',
+                        'items' => [
+                            ['', ''],
+                            ['Image', 'image'],
+                            ['Audio', 'audio'],
+                            ['Video', 'video'],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]
 
-.. code-block:: php
+..  _administrator-usage-tca-example-2:
 
-   'datafields' => [
-   	'label' => 'Database column for example 2',
-   	'config' => [
-   		'type' => 'user',
-   		'renderType' => 'jsonFlex',
-   		'columns' => [
-   			'placeholder' => [
-   				'label' => 'JSON field: simple text input',
-   				'config' => [
-   					'type' => 'input',
-   					'size' => 30,
-   					'eval' => 'trim',
-   					'default' => ''
-   				],
-   			],
-   			'other' => [
-   				'label' => 'JSON field: nested jsonFlex',
-   				'config' => [
-					'type' => 'user',
-					'renderType' => 'jsonFlex',
-					'columns' => [
-						...
-					]
-   				],
-   			],
-   		],
-   	]
-   ]
+Example 2: Record types and palettes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Using :ref:`record types <t3tca:types>` and palettes.
+
+..  important::
+
+    The type column has to be a real database column, it cannot be a JsonFlex
+    field.
+
+..  code-block:: php
+
+    'type' => [
+        'label' => 'Dataset type, like CType in tt_content',
+        'config' => [
+            'type' => 'select',
+            'renderType' => 'selectSingle',
+            'items' => [
+                ['', 'default'],
+                ['Container element', 'container'],
+                ['Special content', 'special'],
+            ],
+        ],
+    ],
+    'datafields' => [
+        'label' => 'Database column for example 2',
+        'config' => [
+            'type' => 'user',
+            'renderType' => 'jsonFlex',
+            'types' => [
+                'default' => ['showitem' => '--palette--;;inputPalette, mediatype'],
+                'container' => ['showitem' => 'mediatype'],
+                'special' => ['showitem' => '--palette--;;inputPalette'],
+            ],
+            'palettes' => [
+                'inputPalette' => [
+                    'label' => 'Palette with placeholder and required-checkbox',
+                    'showitem' => 'placeholder, required',
+                ],
+            ],
+            'columns' => [
+                'placeholder' => [
+                    'label' => 'JSON field: simple text input',
+                    'config' => [
+                        'type' => 'input',
+                        'size' => 30,
+                        'eval' => 'trim',
+                        'default' => '',
+                    ],
+                ],
+                'required' => [
+                    'label' => 'JSON field: simple checkbox',
+                    'config' => [
+                        'type' => 'check',
+                    ],
+                ],
+                'mediatype' => [
+                    'label' => 'JSON field: simple select',
+                    'config' => [
+                        'type' => 'select',
+                        'renderType' => 'selectSingle',
+                        'items' => [
+                            ['', ''],
+                            ['Image', 'image'],
+                            ['Audio', 'audio'],
+                            ['Video', 'video'],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]
+
+..  _administrator-usage-tca-example-3:
+
+Example 3: Nested JsonFlex columns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+..  code-block:: php
+
+    'datafields' => [
+        'label' => 'Database column for example 3',
+        'config' => [
+            'type' => 'user',
+            'renderType' => 'jsonFlex',
+            'columns' => [
+                'placeholder' => [
+                    'label' => 'JSON field: simple text input',
+                    'config' => [
+                        'type' => 'input',
+                        'size' => 30,
+                        'eval' => 'trim',
+                        'default' => '',
+                    ],
+                ],
+                'other' => [
+                    'label' => 'JSON field: nested jsonFlex',
+                    'config' => [
+                        'type' => 'user',
+                        'renderType' => 'jsonFlex',
+                        'columns' => [
+                            // ...
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]
+
+..  _administrator-scope:
+
+Scope and limitations
+=====================
+
+..  _administrator-scope-works:
 
 What works
 ----------
 
-- Column-Types *input*, *check*, *select*, *text*, *folder*, *group*
-- `Record Types <https://docs.typo3.org/m/typo3/reference-tca/main/en-us/Types/Index.html>`_ and palettes.
+*   Column types *input*, *check*, *select*, *text*, *folder*, *group*
+*   :ref:`Record types <t3tca:types>` and palettes
 
-What does not works
--------------------
+..  _administrator-scope-does-not-work:
 
-- Column-Type *category*
-
-What is not testet
+What does not work
 ------------------
 
-- Everything else
+*   Column type *category*
+
+..  _administrator-scope-untested:
+
+What is not tested
+------------------
+
+*   Everything else
+
+..  _administrator-scope-access-control:
+
+Access control: :php:`exclude` is not evaluated
+-----------------------------------------------
+
+..  warning::
+
+    The :php:`exclude` option is **silently ignored** on JsonFlex sub-columns.
+    Do not rely on it to hide a sub-field from backend users.
+
+Sub-columns configured below a JsonFlex field are not real TCA columns of the
+table. They therefore never appear in the backend user and group permission
+setting :guilabel:`Allowed excludefields`, and there is no permission that could
+be granted or denied for them.
+
+Accordingly, the JsonFlex container does not perform the
+:php:`non_exclude_fields` check that TYPO3 applies to regular record fields:
+setting :php:`'exclude' => 1` (or :php:`true`) on a sub-column has no effect —
+the field is rendered and editable for every backend user who may edit the
+record itself.
+
+If a value must be restricted to certain backend users, store it in a real
+database column with its own TCA configuration instead of a JsonFlex sub-column.
+
+The same applies to :php:`l10n_mode` set to :php:`'exclude'`, which is not
+evaluated for sub-columns either.
+
+..  _administrator-scope-invalid-json:
+
+Handling of invalid JSON
+------------------------
+
+If the stored value of a JsonFlex column cannot be decoded, the field is
+rendered as if it were empty, following the behaviour of the TYPO3 core for its
+native :php:`json` column type. No error message is shown to the editor.

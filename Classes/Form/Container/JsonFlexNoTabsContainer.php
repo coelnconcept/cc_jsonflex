@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -37,23 +39,23 @@ class JsonFlexNoTabsContainer extends AbstractContainer
 	];
 	
 	/**
-     * Entry method
-     *
-     * @return array As defined in initializeResultArray() of AbstractNode
-     */
-    public function render(): array
-    {
-    	$resultArray = $this->initializeResultArray();
-    	
-    	$fieldInformationResult = $this->renderFieldInformation();
-    	$resultArray['html'] = '<div>' . $fieldInformationResult['html'] . '</div>';
-    	$resultArray = $this->mergeChildReturnIntoExistingResult($resultArray, $fieldInformationResult, false);
-    	
-    	$options = $this->data;
-        $options['renderType'] = 'paletteAndSingleContainer';
-        $childResult = $this->nodeFactory->create($options)->render();
-        $resultArray = $this->mergeChildReturnIntoExistingResult($resultArray, $childResult, true);
-        $resultArray['html'] = '<div class="tab-content">' . $resultArray['html'] . '</div>';
-        return $resultArray;
-    }
+	 * Entry method
+	 *
+	 * @return array As defined in initializeResultArray() of AbstractNode
+	 */
+	public function render(): array
+	{
+		$resultArray = $this->initializeResultArray();
+		
+		$fieldInformationResult = $this->renderFieldInformation();
+		$resultArray['html'] = '<div>' . $fieldInformationResult['html'] . '</div>';
+		$resultArray = $this->mergeChildReturnIntoExistingResult($resultArray, $fieldInformationResult, false);
+		
+		$options = $this->data;
+		$options['renderType'] = 'paletteAndSingleContainer';
+		$childResult = $this->nodeFactory->create($options)->render();
+		$resultArray = $this->mergeChildReturnIntoExistingResult($resultArray, $childResult, true);
+		$resultArray['html'] = '<div class="tab-content">' . $resultArray['html'] . '</div>';
+		return $resultArray;
+	}
 }

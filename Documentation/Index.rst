@@ -1,51 +1,80 @@
-.. include:: Includes.txt
+..  include:: /Includes.rst.txt
 
-.. _start:
+..  _start:
 
-.. figure:: Images/logo_coelnconcept.png
-   :align: left
-   :name: logo_coelnconcept
-   :alt: Coeln Concept GmbH
-   :width: 400
+..  figure:: /Images/logo_coelnconcept.png
+    :align: left
+    :name: logo_coelnconcept
+    :alt: Coeln Concept GmbH
+    :width: 400
 
-=========
-|project|
-=========
+============
+CC JsonFlex
+============
+
+:Extension key:
+    cc_jsonflex
+
+:Package name:
+    coelnconcept/cc-jsonflex
 
 :Version:
-   |release|
+    |release|
 
 :Language:
-   en
+    en
 
-:Authors:
-   Coeln Concept GmbH
+:Author:
+    Coeln Concept GmbH
 
 :Email:
-   info@coelnconcept.de
+    info@coelnconcept.de
 
 :Website:
-   `www.coelnconcept.de <https://www.coelnconcept.de/serviceportale/systeme/typo3/typo3-extensions-von-coeln-concept/cc-jsonflex/>`_
+    `www.coelnconcept.de <https://www.coelnconcept.de/serviceportale/systeme/typo3/typo3-extensions-von-coeln-concept/cc-jsonflex/>`__
 
 :License:
-   This extension documentation is published under the
-   GNU GENERAL PUBLIC LICENSE
-   Version 3, 29 June 2007
-   Copyright (C) 2007 Free Software Foundation, Inc. `fsf.org <https://fsf.org/>`_ .
+    This extension documentation is published under the
+    `GNU General Public License, Version 3 <https://www.gnu.org/licenses/gpl-3.0.html>`__.
 
-**TYPO3**
+:Rendered:
+    |today|
 
-The content of this document is related to TYPO3 CMS,
-a GNU/GPL CMS/Framework available from `typo3.org <https://typo3.org/>`_ .
+----
 
-**Extension Manual**
+..  _introduction:
 
-This documentation is for the TYPO3 extension |extkey|.
+`TYPO3 <https://typo3.org/>`__ uses :ref:`FlexForms <t3coreapi:flexforms>` to
+store dynamic structured content in one database column, using XML as format.
 
+Our approach is to use the widely available format JSON and the well-established
+TCA configuration.
 
-.. toctree::
-   :maxdepth: 3
+..  _what-it-does:
 
-   Introduction/Index
-   Administrator/Index
-   Changelog/Index
+What does it do?
+================
+
+This extension provides the render type *jsonFlex* for the TCA configuration to
+extend a database field into multiple dynamic sub-fields.
+
+..  important::
+
+    Please read the :ref:`administrator manual <administrator>` for usage and
+    examples.
+
+----
+
+The content of this document is related to TYPO3 CMS, a GNU/GPL
+CMS/Framework available from `typo3.org <https://typo3.org/>`__.
+
+----
+
+**Table of Contents:**
+
+..  toctree::
+    :maxdepth: 2
+    :titlesonly:
+
+    Administrator/Index
+    Changelog/Index

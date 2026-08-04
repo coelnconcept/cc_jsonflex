@@ -1,3 +1,8 @@
+1.1.0 	2026-08-04 tda  <info@coelnconcept.de>
+
+	* Compatibility with TYPO3 14, while remaining compatible with TYPO3 13.
+	* Documentation migrated to the current TYPO3 rendering format.
+
 1.0.0 	2025-11-26 tda  <info@coelnconcept.de>
 
 	* Initial release.
