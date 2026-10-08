@@ -65,6 +65,9 @@ Example 1: Simple fields
         'config' => [
             'type' => 'user',
             'renderType' => 'jsonFlex',
+            'types' => [
+                '1' => ['showitem' => 'placeholder, required, mediatype'],
+            ],
             'columns' => [
                 'placeholder' => [
                     'label' => 'JSON field: simple text input',
@@ -185,6 +188,9 @@ Example 3: Nested JsonFlex columns
         'config' => [
             'type' => 'user',
             'renderType' => 'jsonFlex',
+            'types' => [
+                '1' => ['showitem' => 'placeholder, other'],
+            ],
             'columns' => [
                 'placeholder' => [
                     'label' => 'JSON field: simple text input',
@@ -200,6 +206,9 @@ Example 3: Nested JsonFlex columns
                     'config' => [
                         'type' => 'user',
                         'renderType' => 'jsonFlex',
+                        'types' => [
+                            '1' => ['showitem' => '...'],
+                        ],
                         'columns' => [
                             // ...
                         ],
@@ -228,6 +237,9 @@ What does not work
 ------------------
 
 *   Column type *category*
+*   Relations with an :php:`MM` table
+*   :php:`behaviour.allowLanguageSynchronization` on sub-columns, see
+    :ref:`administrator-scope-localization`
 
 ..  _administrator-scope-untested:
 

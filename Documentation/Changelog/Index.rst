@@ -6,6 +6,15 @@
 Change log
 ==========
 
+Version 1.2.0
+-------------
+
+*   Check of sub-fields with DataHandler.
+*   Merge sub-fields with option mergeDataOnUpdate.
+*   BREAKING: Datatypes can change by processing via DataHandler, e.g.
+    datetime as timestamp
+*   BREAKING: Merge of nested jsonFlex columns with mergeDataOnUpdate.
+
 Version 1.1.0
 -------------
 

@@ -1,3 +1,11 @@
+1.2.0 	2026-10-07 tda  <info@coelnconcept.de>
+
+	* Check of sub-fields with DataHandler.
+	* Proper merge of sub-fields when option mergeDataOnUpdate is enabled.
+	* BREAKING: Datatypes can change by processing via DataHandler, e.g.
+	  datetime as timestamp
+	* BREAKING: Merge of nested jsonFlex columns with mergeDataOnUpdate.
+
 1.1.0 	2026-08-04 tda  <info@coelnconcept.de>
 
 	* Compatibility with TYPO3 14, while remaining compatible with TYPO3 13.
