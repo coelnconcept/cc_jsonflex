@@ -16,8 +16,10 @@ namespace CoelnConcept\CcJsonflex\Hooks;
  */
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Configuration\Tca\TcaMigration;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class JsonFlexDataHandler implements SingletonInterface {
 
@@ -58,6 +60,7 @@ class JsonFlexDataHandler implements SingletonInterface {
 	 * for their pseudo fields. Nested jsonFlex columns are handled recursively.
 	 */
 	private function processSubFields(array $values, array $columns, string $table, int|string $id, string $path, DataHandler $dataHandler): array {
+		$columns = $this->migrateColumns($table, $columns);
 		foreach ($columns as $name=>$column) {
 			if (!array_key_exists($name, $values)) {
 				continue;
@@ -76,6 +79,23 @@ class JsonFlexDataHandler implements SingletonInterface {
 			}
 		}
 		return $values;
+	}
+
+	/**
+	 * Applies the TCA migrations to the sub-columns of one level, like
+	 * JsonFlexContainer does for rendering. Sub-columns are not part of
+	 * $GLOBALS['TCA'][$table]['columns'] and are therefore not migrated during
+	 * bootstrap, e.g. select items in the legacy format ['label', 'value'].
+	 * Nested jsonFlex columns are migrated when their level is processed.
+	 */
+	private function migrateColumns(string $table, array $columns): array {
+		if ($columns === []) {
+			return [];
+		}
+		// TcaMigration::migrate() returns a TcaProcessingResult object since TYPO3 v14, an array before
+		$migrationResult = GeneralUtility::makeInstance(TcaMigration::class)->migrate([$table => ['columns' => $columns]]);
+		$migratedTca = is_array($migrationResult) ? $migrationResult : $migrationResult->getTca();
+		return $migratedTca[$table]['columns'] ?? $columns;
 	}
 
 	/**

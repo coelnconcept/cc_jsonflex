@@ -6,6 +6,11 @@
 Change log
 ==========
 
+Version 1.2.1
+-------------
+
+*   BUGFIX: Process legacy configuration of sub-fields with TcaMigration.
+
 Version 1.2.0
 -------------
 

@@ -1,3 +1,7 @@
+1.2.1 	2026-10-28 tda  <info@coelnconcept.de>
+
+	* BUGFIX: Process legacy configuration of sub-fields with TcaMigration.
+
 1.2.0 	2026-10-07 tda  <info@coelnconcept.de>
 
 	* Check of sub-fields with DataHandler.
