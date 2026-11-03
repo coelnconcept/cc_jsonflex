@@ -111,14 +111,7 @@ class SingleFieldContainer extends \TYPO3\CMS\Backend\Form\Container\SingleField
 			$parameterArray['itemFormElName'] .= '[' . $jsonFlexParentField['fieldName'] . ']';
 		}
 		$parameterArray['itemFormElName'] .= '[' . $fieldName . ']';
-		$newElementBaseName = '';
-		if (isset($this->data['elementBaseName'])) {
-			$newElementBaseName = $this->data['elementBaseName'] . '[' . $table . '][' . $row['uid'] . ']';
-			foreach ($this->data['jsonFlexParentFields'] as $jsonFlexParentField) {
-				$newElementBaseName .= '[' . $jsonFlexParentField['fieldName'] . ']';
-			}
-			$newElementBaseName .= '[' . $fieldName . ']';
-		}
+		$newElementBaseName = isset($this->data['elementBaseName']) ? $this->data['elementBaseName'] . '[' . $fieldName . ']' : '';
 
 		$formDataCompilerInput = array_intersect_key($this->data, array_flip(['request','tableName','vanillaUid','effectivePid','inlineFirstPid','command','returnUrl','processedTca','databaseRow','recordTypeValue']));
 		$formDataCompilerInput['databaseRow']['pid'] = $this->data['effectivePid'];

@@ -42,10 +42,16 @@ class JsonFlexContainer extends AbstractContainer
 	 */
 	public function render(): array
 	{
-		$recordTypeValue = $this->data['recordTypeValue'];
+		$types = $this->data['parameterArray']['fieldConf']['config']['types'] ?? [];
+		$recordTypeValue = (string) ($this->data['recordTypeValue'] ?? '');
+		// The record type of the parent record (e.g. CType of tt_content) is not necessarily
+		// defined in the jsonFlex field. Fall back to '0' or '1' like the core does.
+		if (!isset($types[$recordTypeValue]['showitem'])) {
+			$recordTypeValue = isset($types['0']['showitem']) ? '0' : '1';
+		}
 
 		// List of items to be rendered
-		$itemList = $this->data['parameterArray']['fieldConf']['config']['types'][$recordTypeValue]['showitem'];
+		$itemList = (string) ($types[$recordTypeValue]['showitem'] ?? '');
 
 		$fieldsArray = GeneralUtility::trimExplode(',', $itemList, true);
 
@@ -82,9 +88,20 @@ class JsonFlexContainer extends AbstractContainer
 		}
 
 		$options = $this->data;
+		$options['recordTypeValue'] = $recordTypeValue;
 		if (!isset($options['jsonFlexParentFields'])) $options['jsonFlexParentFields'] = [];
 		$options['jsonFlexParentFields'][] = $options;
-		$options['databaseRow'] = (array) json_decode($options['parameterArray']['itemFormElValue'], true, 512);
+		// On top level the value is a JSON string, in nested jsonFlex fields it is already
+		// an array (decoded by the parent). It may also be null (missing value / NULL column).
+		$value = $options['parameterArray']['itemFormElValue'] ?? null;
+		if (is_array($value)) {
+			$decoded = $value;
+		} elseif (is_string($value) && $value !== '') {
+			$decoded = json_decode($value, true, 512);
+		} else {
+			$decoded = [];
+		}
+		$options['databaseRow'] = is_array($decoded) ? $decoded : [];
 		$options['databaseRow']['uid'] = $this->data['databaseRow']['uid'];
 		foreach ($fieldList as $field) {
 			if (!isset($options['databaseRow'][$field])) $options['databaseRow'][$field] = null;
@@ -114,7 +131,7 @@ class JsonFlexContainer extends AbstractContainer
 			'databaseRow' => $options['databaseRow'],
 			'tableName' => $options['tableName'],
 		];
-		// Since TYPO3 v14 the FormEngine keeps the full TCA and the TCA schemata
+		// Since TYPO3 v14.2 the FormEngine keeps the full TCA and the TCA schemata
 		// as state that is passed down through nested FormDataCompiler calls. The
 		// "flexFormSegment" data group does not contain InitializeProcessedTca, so
 		// these values would stay null and providers like TcaSelectItems (foreign_table)

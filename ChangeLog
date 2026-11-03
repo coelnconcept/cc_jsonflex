@@ -1,3 +1,12 @@
+1.2.2 	2026-11-03 tda  <info@coelnconcept.de>
+
+	* BUGFIX: Nested jsonFlex-fields, field descriptions, Fallback record type
+	* Processing of columnsOverrides.
+	* BREAKING: Keys that are not configured in columns are discarded when
+	  saving, also when data is written via the DataHandler API.
+	* BREAKING: If validation of a sub-field fails, the stored value is kept
+	  instead of removing the key.
+
 1.2.1 	2026-10-28 tda  <info@coelnconcept.de>
 
 	* BUGFIX: Process legacy configuration of sub-fields with TcaMigration.

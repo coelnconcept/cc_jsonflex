@@ -6,6 +6,16 @@
 Change log
 ==========
 
+Version 1.2.2
+-------------
+
+*   BUGFIX: Nested jsonFlex-fields, field descriptions, Fallback record type
+*   Processing of columnsOverrides.
+*   BREAKING: Keys that are not configured in columns are discarded when
+    saving, also when data is written via the DataHandler API.
+*   BREAKING: If validation of a sub-field fails, the stored value is kept
+    instead of removing the key.
+
 Version 1.2.1
 -------------
 

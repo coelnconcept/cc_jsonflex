@@ -79,6 +79,10 @@ class JsonFlexTabsContainer extends AbstractContainer
 		$resultArray = $this->initializeResultArray();
 		$resultArray['javaScriptModules'][] = JavaScriptModuleInstruction::create('@typo3/backend/tabs.js');
 
+		// Since TYPO3 v14.2 wrapWithFieldsetAndLegend() in JsonFlexContainer renders the description itself
+		if (method_exists(AbstractContainer::class, 'renderDescription')) {
+			unset($this->defaultFieldInformation['tcaDescription']);
+		}
 		$fieldInformationResult = $this->renderFieldInformation();
 		$resultArray['html'] .= '<div>' . $fieldInformationResult['html'] . '</div>';
 		$resultArray = $this->mergeChildReturnIntoExistingResult($resultArray, $fieldInformationResult, false);
@@ -93,8 +97,6 @@ class JsonFlexTabsContainer extends AbstractContainer
 			// Merge elements of this tab into a single list again and hand over to
 			// palette and single field container to render this group
 			$options = $this->data;
-			$options['elementBaseName'] .= '['.$options['fieldName'].']';
-			$options['parameterArray']['itemFormElName'] .= '['.$options['fieldName'].']';
 			$options['tabAndInlineStack'][] = [
 				'tab',
 				$domIdPrefix . '-' . $tabCounter,

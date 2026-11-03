@@ -283,3 +283,24 @@ Handling of invalid JSON
 If the stored value of a JsonFlex column cannot be decoded, the field is
 rendered as if it were empty, following the behaviour of the TYPO3 core for its
 native :php:`json` column type. No error message is shown to the editor.
+
+When the record is saved, the invalid value is replaced by the submitted data.
+If :php:`mergeDataOnUpdate` is set, the invalid value is kept instead, because
+it cannot be merged. The submitted data of this field is then discarded and an
+error is written to the log and shown to the editor.
+
+..  _administrator-scope-saving:
+
+Saving data
+-----------
+
+*   Only keys configured in :php:`columns` are saved. Any other submitted keys
+    are discarded, also when data is written via the DataHandler API. With
+    :php:`mergeDataOnUpdate`, keys that are already stored are kept, even if
+    they are not configured in :php:`columns`. Only newly submitted keys are
+    discarded. Without :php:`mergeDataOnUpdate` the whole JSON is replaced by
+    the submitted, filtered data.
+*   If a sub-field fails validation (e.g. an invalid e-mail address), the
+    previously stored value is kept, like TYPO3 does for regular columns.
+*   :php:`columnsOverrides` of the record type are taken into account, also when
+    saving.

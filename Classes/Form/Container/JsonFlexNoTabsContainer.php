@@ -47,6 +47,10 @@ class JsonFlexNoTabsContainer extends AbstractContainer
 	{
 		$resultArray = $this->initializeResultArray();
 		
+		// Since TYPO3 v14.2 wrapWithFieldsetAndLegend() in JsonFlexContainer renders the description itself
+		if (method_exists(AbstractContainer::class, 'renderDescription')) {
+			unset($this->defaultFieldInformation['tcaDescription']);
+		}
 		$fieldInformationResult = $this->renderFieldInformation();
 		$resultArray['html'] = '<div>' . $fieldInformationResult['html'] . '</div>';
 		$resultArray = $this->mergeChildReturnIntoExistingResult($resultArray, $fieldInformationResult, false);
