@@ -18,7 +18,8 @@ declare(strict_types=1);
 namespace CoelnConcept\CcJsonflex\Form\Container;
 
 use TYPO3\CMS\Backend\Form\Behavior\ReloadOnFieldChange;
-use TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord;
+use TYPO3\CMS\Backend\Form\FormDataGroup\OrderedProviderList;
+use TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseUserPermissionCheck;
 use TYPO3\CMS\Backend\Form\Utility\FormEngineUtility;
 use TYPO3\CMS\Core\Authentication\JsConfirmation;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -115,14 +116,24 @@ class SingleFieldContainer extends \TYPO3\CMS\Backend\Form\Container\SingleField
 
 		$formDataCompilerInput = array_intersect_key($this->data, array_flip(['request','tableName','vanillaUid','effectivePid','inlineFirstPid','command','returnUrl','processedTca','databaseRow','recordTypeValue']));
 		$formDataCompilerInput['databaseRow']['pid'] = $this->data['effectivePid'];
-		if (!empty($this->data['overrideVals']) && is_array($this->data['overrideVals'][$table])) {
+		if (!empty($this->data['overrideVals']) && is_array($this->data['overrideVals'][$table]??null)) {
 			$formDataCompilerInput['overrideValues'] = $this->data['overrideVals'][$table];
 		}
 		if (!empty($this->data['defaultValues']) && is_array($this->data['defaultValues'])) {
 			$formDataCompilerInput['defaultValues'] = $this->data['defaultValues'];
 		}
+		if (isset($this->data['userPermissionOnPage'])) {
+			$formDataCompilerInput['userPermissionOnPage'] = $this->data['userPermissionOnPage'];
+		}
+		// The record itself was already checked by the outer FormEngine call with the real database row.
+		// The virtual jsonFlex row lacks fields like the languageField, so recordEditAccessInternals() would
+		// fail for non-admin users. Skip the permission check here and keep the result of the outer check.
+		$providerList = $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'];
+		$providerList[DatabaseUserPermissionCheck::class]['disabled'] = true;
+		$formDataGroup = GeneralUtility::makeInstance(OrderedProviderList::class);
+		$formDataGroup->setProviderList($providerList);
 		$formDataCompiler = GeneralUtility::makeInstance(\TYPO3\CMS\Backend\Form\FormDataCompiler::class);
-		$formData = $formDataCompiler->compile($formDataCompilerInput, GeneralUtility::makeInstance(TcaDatabaseRecord::class));
+		$formData = $formDataCompiler->compile($formDataCompilerInput, $formDataGroup);
 
 		// The value to show in the form field.
 		$parameterArray['itemFormElValue'] = $formData['databaseRow'][$fieldName]??$row[$fieldName];

@@ -1,3 +1,7 @@
+1.2.3 	2026-11-16 tda  <info@coelnconcept.de>
+
+	* BUGFIX: Permission-check for subfields and non-administration users
+
 1.2.2 	2026-11-03 tda  <info@coelnconcept.de>
 
 	* BUGFIX: Nested jsonFlex-fields, field descriptions, Fallback record type

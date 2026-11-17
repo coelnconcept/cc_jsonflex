@@ -6,6 +6,11 @@
 Change log
 ==========
 
+Version 1.2.3
+-------------
+
+*   BUGFIX: Permission-check for subfields and non-administration users
+
 Version 1.2.2
 -------------
 
